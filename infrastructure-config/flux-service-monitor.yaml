@@ -1,0 +1,22 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: flux-system
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/part-of: flux
+spec:
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - notification-controller
+          - source-controller
+          - webhook-receiver
+  namespaceSelector:
+    matchNames:
+      - flux-system
+  endpoints:
+    - port: http

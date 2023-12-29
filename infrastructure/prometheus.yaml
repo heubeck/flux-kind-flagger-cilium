@@ -1,0 +1,189 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: prometheus-community
+  namespace: monitoring
+spec:
+  interval: 15m
+  url: https://prometheus-community.github.io/helm-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: prometheus-operator
+  namespace: monitoring
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      version: "*"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: monitoring
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
+  values:
+    coreDns:
+      enabled: false
+    kubeDns:
+      enabled: false
+    defaultRules:
+      rules:
+        etcd: false
+        kubeScheduler: false
+        time: false
+        kubernetesResources: true
+        kubelet: true
+        kubeProxy: false
+    kubeControllerManager:
+      enabled: false
+    kubeEtcd:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    kubeProxy:
+      enabled: false
+    kubelet:
+      enabled: true
+    prometheus:
+      prometheusSpec:
+        externalUrl: "http://localhost:8080/prometheus/"
+        routePrefix: /prometheus/
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
+        ruleSelectorNilUsesHelmValues: false
+    alertmanager:
+      enabled: false
+    grafana:
+      enabled: true
+      grafana.ini:
+        auth.anonymous:
+          enabled: true
+          org_role: Admin
+        server:
+          root_url: "http://localhost:8080/grafana/"
+          serve_from_sub_path: true
+        security:
+          allow_embedding: true
+          cookie_samesite: none
+      serviceMonitor:
+        path: "/grafana/metrics"
+      # stolen from: https://github.com/linkerd/linkerd2/blob/main/grafana/values.yaml
+      dashboardProviders:
+        dashboardproviders.yaml:
+          apiVersion: 1
+          providers:
+          - name: 'default'
+            orgId: 1
+            folder: ''
+            type: file
+            disableDeletion: true
+            editable: false
+            options:
+              path: /var/lib/grafana/dashboards/default
+      dashboards:
+        default:
+          # all these charts are hosted at https://grafana.com/grafana/dashboards/{id}
+          top-line:
+            gnetId: 15474
+            revision: 4
+            datasource: prometheus
+          health:
+            gnetId: 15486
+            revision: 3
+            datasource: prometheus
+          kubernetes:
+            gnetId: 15479
+            revision: 2
+            datasource: prometheus
+          namespace:
+            gnetId: 15478
+            revision: 3
+            datasource: prometheus
+          deployment:
+            gnetId: 15475
+            revision: 6
+            datasource: prometheus
+          pod:
+            gnetId: 15477
+            revision: 3
+            datasource: prometheus
+          service:
+            gnetId: 15480
+            revision: 3
+            datasource: prometheus
+          route:
+            gnetId: 15481
+            revision: 3
+            datasource: prometheus
+          authority:
+            gnetId: 15482
+            revision: 3
+            datasource: prometheus
+          cronjob:
+            gnetId: 15483
+            revision: 3
+            datasource: prometheus
+          job:
+            gnetId: 15487
+            revision: 3
+            datasource: prometheus
+          daemonset:
+            gnetId: 15484
+            revision: 3
+            datasource: prometheus
+          replicaset:
+            gnetId: 15491
+            revision: 3
+            datasource: prometheus
+          statefulset:
+            gnetId: 15493
+            revision: 3
+            datasource: prometheus
+          replicationcontroller:
+            gnetId: 15492
+            revision: 4
+            datasource: prometheus
+          prometheus:
+            gnetId: 15489
+            revision: 2
+            datasource: prometheus
+          prometheus-benchmark:
+            gnetId: 15490
+            revision: 2
+            datasource: prometheus
+          multicluster:
+            gnetId: 15488
+            revision: 3
+            datasource: prometheus
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  namespace: monitoring
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              service:
+                name: prometheus-operator-grafana
+                port:
+                  number: 80
+            path: /grafana
+            pathType: Prefix
+    - http:
+        paths:
+          - backend:
+              service:
+                name: prometheus-operated
+                port:
+                  number: 9090
+            path: /prometheus
+            pathType: Prefix

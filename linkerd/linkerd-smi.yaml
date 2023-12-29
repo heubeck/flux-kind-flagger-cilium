@@ -1,0 +1,23 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: linkerd-smi
+  namespace: linkerd-smi
+spec:
+  interval: 30m
+  dependsOn:
+    - name: linkerd-crds
+      namespace: linkerd
+  chart:
+    spec:
+      chart: linkerd-smi
+      version: "*"
+      sourceRef:
+        kind: HelmRepository
+        name: linkerd-smi-charts
+        namespace: linkerd-smi
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace

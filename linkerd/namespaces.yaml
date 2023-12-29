@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: linkerd
+  labels:
+    linkerd.io/is-control-plane: "true"
+    linkerd.io/control-plane-ns: linkerd
+    config.linkerd.io/admission-webhooks: disabled
+    pod-security.kubernetes.io/enforce: privileged
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: linkerd-smi
+  labels:
+    linkerd.io/extension: smi
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: linkerd-viz
+  labels:
+    linkerd.io/extension: viz
+    pod-security.kubernetes.io/enforce: privileged
+  annotations:
+    viz.linkerd.io/external-prometheus: http://prometheus-operated.monitoring:9090/prometheus/
