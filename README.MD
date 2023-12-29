@@ -54,6 +54,7 @@ While `kubectl`, `kind` and `flux` are managed with this repository (for version
   * `jq`
   * `cut`
   * `awk`
+  * `sed`
   * `which`
   * `tar` (with gzip support)
 

@@ -49,8 +49,8 @@ cilium_cli_location = $(binary_location)/cilium
 kindest_node_image = kindest/node:$(kindest_node_version)
 
 ### leave empty for enforcing docker even if podman was available, or set env NO_PODMAN=1
-# kind_podman =
-kind_podman = $(shell [[ "$$NO_PODMAN" -ne 1 ]] && which podman > /dev/null && echo "KIND_EXPERIMENTAL_PROVIDER=podman" || echo "")
+kind_podman =
+# kind_podman = $(shell [[ "$$NO_PODMAN" -ne 1 ]] && which podman > /dev/null && echo "KIND_EXPERIMENTAL_PROVIDER=podman" || echo "")
 
 kind_cmd = $(kind_podman) $(kind_location)
 
@@ -146,6 +146,17 @@ new: # create fresh kind cluster
 	@$(kubectl_location) rollout status --timeout=$(wait_timeout) daemonset -n kube-system cilium
 	@$(cilium_cli_location) status --wait --wait-duration $(wait_timeout)
 
+	# Install MetalLB
+	@$(kubectl_location) apply -k .kind/metallb
+
+	# Wait for MetalLB to become ready
+	@$(kubectl_location) rollout status --timeout=$(wait_timeout) deployment -n metallb-system controller
+	@$(kubectl_location) rollout status --timeout=$(wait_timeout) daemonset -n metallb-system speaker
+
+	$(eval lb_ip_range := $(shell docker network inspect kind -f '{{(index .IPAM.Config 0).Subnet}}' | sed 's#0.0/16#250.0/24#'))
+	# Setting MetalLB address-pool range to $(lb_ip_range)
+	@sed -i "s#addresses:.*#addresses: [\"$(lb_ip_range)\"]#" .kind/metallb/ip-address-pool.yaml
+	@$(kubectl_location) apply -f .kind/metallb/ip-address-pool.yaml
 
 .PHONY: kube-ctx
 kube-ctx: # create fresh kind cluster

@@ -1,0 +1,33 @@
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: apps-gateway
+  namespace: apps
+spec:
+  gatewayClassName: cilium
+  listeners:
+  - protocol: HTTP
+    port: 80
+    name: apps-gw
+    allowedRoutes:
+      namespaces:
+        from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: examiner
+  namespace: apps
+spec:
+  parentRefs:
+  - name: apps-gateway
+    namespace: apps
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /examine
+    backendRefs:
+    - name: examiner
+      port: 80
