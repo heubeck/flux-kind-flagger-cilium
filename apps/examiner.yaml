@@ -19,7 +19,7 @@ spec:
       repository: quay.io/heubeck/examiner
       tag: latest
     monitoring:
-      serviceMonitor: false
+      serviceMonitor: true
     configuration:
       ECHO_VALUE: ⛈ Canaries r0ck, hell yeah! 🤘
       SERVER_ERROR_RATE: 0

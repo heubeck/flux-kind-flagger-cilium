@@ -5,4 +5,4 @@ resources:
 - namespace.yaml
 - helm-charts.yaml
 - examiner.yaml
-- gateway.yaml
+- route.yaml

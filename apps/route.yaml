@@ -1,0 +1,18 @@
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: route
+  namespace: apps
+spec:
+  parentRefs:
+    - name: http-gateway
+      namespace: default
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /examine
+    backendRefs:
+    - name: examiner
+      port: 80
