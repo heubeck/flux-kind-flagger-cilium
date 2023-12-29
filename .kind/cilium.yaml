@@ -1,0 +1,15 @@
+# https://github.com/cilium/cilium/blob/v1.14.5/install/kubernetes/cilium/values.yaml
+gatewayAPI:
+  enabled: true
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+    service:
+      type: NodePort
+      nodePort: 30000
+envoy:
+  enabled: true
+kubeProxyReplacement: "true"

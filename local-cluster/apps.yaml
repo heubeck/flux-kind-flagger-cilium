@@ -6,9 +6,8 @@ metadata:
   namespace: flux-system
 spec:
   interval: 30s
-  dependsOn:
-    - name: infrastructure
-    - name: linkerd
+#  dependsOn:
+#    - name: infrastructure
   sourceRef:
     kind: GitRepository
     name: flux-system

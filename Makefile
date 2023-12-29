@@ -26,6 +26,12 @@ flux_version = v2.2.2
 # https://hub.docker.com/r/kindest/node/tags
 kindest_node_version = v1.29.0
 
+# https://github.com/cilium/cilium-cli/releases
+cilium_cli_version = v0.15.19
+
+# https://gateway-api.sigs.k8s.io/guides/?h=crds#installing-gateway-api
+gatway_api_crd_url = https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
+
 ###
 
 kubectl_arch = $(os)/$(arch)
@@ -37,6 +43,9 @@ kind_location = $(binary_location)/kind
 flux_arch = $(os)_$(arch)
 flux_location = $(binary_location)/flux
 
+cilium_cli_arch = $(os)-$(arch)
+cilium_cli_location = $(binary_location)/cilium
+
 kindest_node_image = kindest/node:$(kindest_node_version)
 
 ### leave empty for enforcing docker even if podman was available, or set env NO_PODMAN=1
@@ -45,7 +54,15 @@ kind_podman = $(shell [[ "$$NO_PODMAN" -ne 1 ]] && which podman > /dev/null && e
 
 kind_cmd = $(kind_podman) $(kind_location)
 
-wait_timeout= "60s"
+wait_timeout= "120s"
+
+gitops_repo_owner = $(shell [[ "$(gitops_repo)" = http* ]] && echo $(gitops_repo) | cut -d/ -f4 || echo $(gitops_repo) | cut -d: -f2 | cut -d/ -f1)
+gitops_repo_name = $(shell [[ "$(gitops_repo)" = http* ]] && echo $(gitops_repo) | cut -d/ -f5 | cut -d. -f1 || echo $(gitops_repo) | cut -d/ -f2 | cut -d. -f1)
+
+kind_version_number = $(shell echo $(kind_version) | cut -c 2-)
+flux_version_number = $(shell echo $(flux_version) | cut -c 2-)
+kubectl_version_number = $(shell echo $(kubectl_version) | cut -c 2-)
+cilium_version_number = $(shell $(cilium_cli_location) version --client | grep "(stable)" | awk '{print $$4}' | cut -c 2-)
 
 .PHONY: pre-check
 pre-check: # validate required tools
@@ -66,26 +83,25 @@ pre-check: # validate required tools
 	# Flux ($(flux_location))
 	@$(flux_location) --version
 	#
-
-gitops_repo_owner = $(shell [[ "$(gitops_repo)" = http* ]] && echo $(gitops_repo) | cut -d/ -f4 || echo $(gitops_repo) | cut -d: -f2 | cut -d/ -f1)
-gitops_repo_name = $(shell [[ "$(gitops_repo)" = http* ]] && echo $(gitops_repo) | cut -d/ -f5 | cut -d. -f1 || echo $(gitops_repo) | cut -d/ -f2 | cut -d. -f1)
+	# Cilium ($(cilium_cli_location))
+	@$(cilium_cli_location) version --client
+	#
 
 .PHONY: check
 check: pre-check # validate prerequisites
 	### Checking prerequisites
 	# Kube Context
 	@$(kubectl_location) cluster-info --context kind-$(cluster_name) | grep 127.0.0.1
+	@test -n "$(cilium_version_number)"
+	# Cilium version set ✓
 	#
 	# GitOps-Repository-Url: $(gitops_repo)
 	# Repo-Owner: $(gitops_repo_owner)
 	# Repo-Name: $(gitops_repo_name)
 	# GitOps-Branch: $(gitops_branch)
+	# Cilium Version to be installed: $(cilium_version_number)
 	# Everything is fine, lets get bootstrapped
 	#
-
-kind_version_number = $(shell echo $(kind_version) | cut -c 2-)
-flux_version_number = $(shell echo $(flux_version) | cut -c 2-)
-kubectl_version_number = $(shell echo $(kubectl_version) | cut -c 2-)
 
 .PHONY: prepare
 prepare: # install prerequisites
@@ -105,11 +121,24 @@ prepare: # install prerequisites
 	@curl -sSLfo $(kubectl_location) https://dl.k8s.io/release/$(kubectl_version)/bin/$(kubectl_arch)/kubectl
 	@chmod a+x $(kubectl_location)
 
+	# Install or update cilium $(cilium_cli_version) for $(cilium_cli_arch) into $(cilium_cli_location)
+	@curl -sSLfo $(cilium_cli_location).tgz https://github.com/cilium/cilium-cli/releases/download/$(cilium_cli_version)/cilium-$(cilium_cli_arch).tar.gz
+	@tar xf $(cilium_cli_location).tgz -C $(binary_location) && rm -f $(cilium_cli_location).tgz
+	@chmod a+x $(cilium_cli_location)
+
 .PHONY: new
 new: # create fresh kind cluster
 	# Creating kind cluster named '$(cluster_name)'
 	@$(kind_cmd) create cluster -n $(cluster_name) --config .kind/config.yaml --image $(kindest_node_image)
 	@$(kind_cmd) export kubeconfig -n $(cluster_name) --kubeconfig ${HOME}/.kube/config
+	# Install Gateway API CRD
+	@$(kubectl_location) apply -f "$(gatway_api_crd_url)"
+	# Install Cilium
+	@$(cilium_cli_location) install --version $(cilium_version_number) --values .kind/cilium.yaml
+	# Wait for Cilium to become ready
+	@$(kubectl_location) rollout status --timeout=$(wait_timeout) daemonset -n kube-system cilium
+	@$(cilium_cli_location) status --wait --wait-duration $(wait_timeout)
+
 
 .PHONY: kube-ctx
 kube-ctx: # create fresh kind cluster
