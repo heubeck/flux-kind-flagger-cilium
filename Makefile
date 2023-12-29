@@ -29,8 +29,8 @@ kindest_node_version = v1.29.0
 # https://github.com/cilium/cilium-cli/releases
 cilium_cli_version = v0.15.19
 
-# https://gateway-api.sigs.k8s.io/guides/?h=crds#installing-gateway-api
-gatway_api_crd_url = https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
+# https://github.com/kubernetes-sigs/gateway-api/releases needs to be compatible with Cilium, see: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/
+gatway_api_version = v0.7.0
 
 ###
 
@@ -131,10 +131,17 @@ new: # create fresh kind cluster
 	# Creating kind cluster named '$(cluster_name)'
 	@$(kind_cmd) create cluster -n $(cluster_name) --config .kind/config.yaml --image $(kindest_node_image)
 	@$(kind_cmd) export kubeconfig -n $(cluster_name) --kubeconfig ${HOME}/.kube/config
+
 	# Install Gateway API CRD
-	@$(kubectl_location) apply -f "$(gatway_api_crd_url)"
+	@$(kubectl_location) apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$(gatway_api_version)/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml
+	@$(kubectl_location) apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$(gatway_api_version)/config/crd/standard/gateway.networking.k8s.io_gateways.yaml
+	@$(kubectl_location) apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$(gatway_api_version)/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml
+	@$(kubectl_location) apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$(gatway_api_version)/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml
+	@$(kubectl_location) apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$(gatway_api_version)/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml
+
 	# Install Cilium
 	@$(cilium_cli_location) install --version $(cilium_version_number) --values .kind/cilium.yaml
+
 	# Wait for Cilium to become ready
 	@$(kubectl_location) rollout status --timeout=$(wait_timeout) daemonset -n kube-system cilium
 	@$(cilium_cli_location) status --wait --wait-duration $(wait_timeout)
