@@ -2,15 +2,15 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: apps
+  name: monitoring-config
   namespace: flux-system
 spec:
-  interval: 30s
+  interval: 15m
   dependsOn:
     - name: infrastructure
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: "./apps"
+  path: "./monitoring-config"
   prune: true
-  timeout: 30s
+  timeout: 2m

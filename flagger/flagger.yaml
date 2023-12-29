@@ -28,5 +28,5 @@ spec:
   upgrade:
     crds: CreateReplace
   values:
-    meshProvider: linkerd
+    meshProvider: gatewayapi:v1beta1
     metricsServer: http://prometheus-operated.monitoring:9090/prometheus/

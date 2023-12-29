@@ -4,19 +4,12 @@ kind: Kustomization
 resources:
 - flux-pod-monitor.yaml
 - flux-service-monitor.yaml
-- ingress-pod-monitor.yaml
 configMapGenerator:
   - name: flux-grafana-dashboards
+    namespace: monitoring
     files:
       - grafana-dashboards/control-plane.json
       - grafana-dashboards/cluster.json
-    options:
-      labels:
-        grafana_dashboard: "1"
-  - name: nginx-grafana-dashboards
-    files:
-      - grafana-dashboards/nginx.json
-      - grafana-dashboards/request-handling-performance.json
     options:
       labels:
         grafana_dashboard: "1"

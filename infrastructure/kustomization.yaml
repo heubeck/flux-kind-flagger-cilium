@@ -5,4 +5,4 @@ resources:
 - namespaces.yaml
 - dashboard.yaml
 - wego.yaml
-#- prometheus.yaml
+- prometheus.yaml
