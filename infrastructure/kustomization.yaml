@@ -7,4 +7,4 @@ resources:
 - dashboard.yaml
 - wego.yaml
 - prometheus.yaml
-- route.yaml
+- routes.yaml

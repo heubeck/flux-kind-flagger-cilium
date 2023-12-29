@@ -25,4 +25,10 @@ spec:
       SERVER_ERROR_RATE: 0
       REQUEST_DELAY: 100..250
     canary:
-      enabled: false
+      enabled: true
+    gatewayApi:
+      enabled: true
+      pathPrefix: /examine
+      gatewayRef:
+        name: http-gateway
+        namespace: default
