@@ -21,8 +21,8 @@ spec:
     monitoring:
       serviceMonitor: true
     configuration:
-      ECHO_VALUE: ⛈ Canaries r0ck, hell yeah! 🤘 THIS IS AWESOME!
-      SERVER_ERROR_RATE: 0
+      ECHO_VALUE: ⛈ Canaries r0ck, hell yeah! 🤘
+      SERVER_ERROR_RATE: 7
       REQUEST_DELAY: 100..250
     canary:
       enabled: true

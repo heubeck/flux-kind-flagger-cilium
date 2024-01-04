@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
 - flux-pod-monitor.yaml
 - flux-service-monitor.yaml
+- cilium-service-monitors.yaml
 configMapGenerator:
   - name: flux-grafana-dashboards
     namespace: monitoring

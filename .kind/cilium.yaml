@@ -5,11 +5,34 @@ hubble:
   enabled: true
   relay:
     enabled: true
+    prometheus:
+      enabled: true
   ui:
     enabled: true
     service:
       type: NodePort
       nodePort: 30000
+  metrics:
+    # https://docs.cilium.io/en/latest/observability/metrics/
+    enabled:
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - icmp
+      - port-distribution
+      - httpV2:labelsContext=source_ip,source_namespace,source_workload,source_app,destination_ip,destination_namespace,destination_workload,destination_app,traffic_direction
+    dashboards:
+      enabled: true
+pometheus:
+  enabled: true
+dashboards:
+  enabled: true
+operator:
+  prometheus:
+    enabled: true
+  dashboards:
+    enabled: true
 envoy:
   enabled: true
 kubeProxyReplacement: "true"
