@@ -1,4 +1,4 @@
-# https://github.com/cilium/cilium/blob/v1.14.6/install/kubernetes/cilium/values.yaml
+# https://github.com/cilium/cilium/blob/v1.15.0/install/kubernetes/cilium/values.yaml
 gatewayAPI:
   enabled: true
 hubble:
@@ -24,7 +24,7 @@ hubble:
       - httpV2:labelsContext=source_ip,source_namespace,source_workload,source_app,destination_ip,destination_namespace,destination_workload,destination_app,traffic_direction
     dashboards:
       enabled: true
-pometheus:
+prometheus:
   enabled: true
 dashboards:
   enabled: true
@@ -35,4 +35,4 @@ operator:
     enabled: true
 envoy:
   enabled: true
-kubeProxyReplacement: "true"
+kubeProxyReplacement: true

@@ -20,17 +20,19 @@ arch = $(shell [[ "$$(uname -m)" = x86_64 ]] && echo "amd64" || echo "$$(uname -
 # https://kubernetes.io/releases/
 kubectl_version = v1.29.1
 # https://github.com/kubernetes-sigs/kind/releases
-kind_version = v0.20.0
+kind_version = v0.21.0
 # https://github.com/fluxcd/flux2/releases
 flux_version = v2.2.2
 # https://hub.docker.com/r/kindest/node/tags
-kindest_node_version = v1.29.0
+kindest_node_version = v1.29.1
 
 # https://github.com/cilium/cilium-cli/releases
-cilium_cli_version = v0.15.20
+cilium_cli_version = v0.15.22
+# https://github.com/cilium/cilium/releases
+cilium_version = v1.15.0
 
 # https://github.com/kubernetes-sigs/gateway-api/releases needs to be compatible with Cilium, see: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/
-gatway_api_version = v0.7.0
+gatway_api_version = v1.0.0
 
 ###
 
@@ -62,7 +64,7 @@ gitops_repo_name = $(shell [[ "$(gitops_repo)" = http* ]] && echo $(gitops_repo)
 kind_version_number = $(shell echo $(kind_version) | cut -c 2-)
 flux_version_number = $(shell echo $(flux_version) | cut -c 2-)
 kubectl_version_number = $(shell echo $(kubectl_version) | cut -c 2-)
-cilium_version_number = $(shell $(cilium_cli_location) version --client | grep "(stable)" | awk '{print $$4}' | cut -c 2-)
+cilium_version_number = $(shell $(cilium_cli_location) version --client | grep "$(cilium_version)" | awk '{print $$4}' | cut -c 2-)
 
 .PHONY: pre-check
 pre-check: # validate required tools
@@ -133,11 +135,7 @@ new: # create fresh kind cluster
 	@$(kind_cmd) export kubeconfig -n $(cluster_name) --kubeconfig ${HOME}/.kube/config
 
 	# Install Gateway API CRD
-	@$(kubectl_location) apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$(gatway_api_version)/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml
-	@$(kubectl_location) apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$(gatway_api_version)/config/crd/standard/gateway.networking.k8s.io_gateways.yaml
-	@$(kubectl_location) apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$(gatway_api_version)/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml
-	@$(kubectl_location) apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$(gatway_api_version)/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml
-	@$(kubectl_location) apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$(gatway_api_version)/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml
+	@$(kubectl_location) apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/$(gatway_api_version)/experimental-install.yaml
 
 	# Install Cilium
 	@$(cilium_cli_location) install --version $(cilium_version_number) --values .kind/cilium.yaml
