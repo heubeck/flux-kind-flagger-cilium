@@ -191,6 +191,11 @@ endif
 reconcile: # reconsule flux-system kustomization
 	@$(flux_location) reconcile kustomization flux-system --with-source
 	@$(kubectl_location) get kustomization -n flux-system
+	@$(flux_location) reconcile kustomization infrastructure
+	@$(flux_location) reconcile kustomization monitoring-config
+	@$(flux_location) reconcile kustomization flagger
+	@$(flux_location) reconcile kustomization apps
+	@$(kubectl_location) get kustomization -n flux-system
 
 .PHONY: wait
 wait: # wait for reconciliation complete

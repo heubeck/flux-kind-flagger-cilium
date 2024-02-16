@@ -4,7 +4,7 @@ kind: MetricTemplate
 metadata:
     name: server-success-rate
     namespace: flux-system
-    # Rate of non 5xx status codes
+    # Rate of non 5xx status codes in %
 spec:
     provider:
         type: prometheus
@@ -26,13 +26,14 @@ spec:
               destination_workload=~"{{ target }}",
               reporter="client"
             }[{{ interval }}]))
+        * 100
 ---
 apiVersion: flagger.app/v1beta1
 kind: MetricTemplate
 metadata:
     name: request-latency-p99
     namespace: flux-system
-    # 99-percentile of request latency in seconds
+    # 99-percentile of request latency in milliseconds
 spec:
     provider:
         type: prometheus
@@ -45,4 +46,4 @@ spec:
             destination_workload=~"{{ target }}",
             reporter="client"
         }[{{ interval }}]))
-      by (le))
+      by (le)) * 1000
