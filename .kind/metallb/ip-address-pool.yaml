@@ -6,7 +6,7 @@ metadata:
   namespace: metallb-system
 spec:
   avoidBuggyIPs: true
-  addresses: ["172.24.250.0/24"]
+  addresses: ["172.17.250.0/24"]
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement

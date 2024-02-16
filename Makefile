@@ -18,18 +18,18 @@ arch = $(shell [[ "$$(uname -m)" = x86_64 ]] && echo "amd64" || echo "$$(uname -
 ### versions
 
 # https://kubernetes.io/releases/
-kubectl_version = v1.29.1
+kubectl_version = v1.29.2
 # https://github.com/kubernetes-sigs/kind/releases
-kind_version = v0.21.0
+kind_version = v0.22.0
 # https://github.com/fluxcd/flux2/releases
-flux_version = v2.2.2
+flux_version = v2.2.3
 # https://hub.docker.com/r/kindest/node/tags
-kindest_node_version = v1.29.1
+kindest_node_version = v1.29.2
 
 # https://github.com/cilium/cilium-cli/releases
-cilium_cli_version = v0.15.22
+cilium_cli_version = v0.15.23
 # https://github.com/cilium/cilium/releases
-cilium_version = v1.15.0
+cilium_version = v1.15.1
 
 # https://github.com/kubernetes-sigs/gateway-api/releases needs to be compatible with Cilium, see: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/
 gatway_api_version = v1.0.0
