@@ -1,0 +1,48 @@
+---
+apiVersion: flagger.app/v1beta1
+kind: MetricTemplate
+metadata:
+    name: server-success-rate
+    namespace: flux-system
+    # Rate of non 5xx status codes
+spec:
+    provider:
+        type: prometheus
+        address: http://prometheus-operated.monitoring:9090/prometheus
+    query: |
+        sum(
+          rate(
+            hubble_http_requests_total{
+              destination_namespace=~"{{ namespace }}",
+              destination_workload=~"{{ target }}",
+              reporter="client",
+              status!~"5.*"
+            }[{{ interval }}]))
+        /
+        sum(
+          rate(
+            hubble_http_requests_total{
+              destination_namespace=~"{{ namespace }}",
+              destination_workload=~"{{ target }}",
+              reporter="client"
+            }[{{ interval }}]))
+---
+apiVersion: flagger.app/v1beta1
+kind: MetricTemplate
+metadata:
+    name: request-latency-p99
+    namespace: flux-system
+    # 99-percentile of request latency in seconds
+spec:
+    provider:
+        type: prometheus
+        address: http://prometheus-operated.monitoring:9090/prometheus
+    query: |
+      histogram_quantile(0.99, sum(
+        rate(
+          hubble_http_request_duration_seconds_bucket{
+            destination_namespace=~"{{ namespace }}",
+            destination_workload=~"{{ target }}",
+            reporter="client"
+        }[{{ interval }}]))
+      by (le))
