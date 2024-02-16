@@ -1,11 +1,38 @@
 ---
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  type: grafana
+  address: "http://prometheus-operator-grafana.monitoring/api/annotations"
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Alert
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  providerRef:
+    name: grafana
+  eventSeverity: info
+  eventSources:
+    - kind: GitRepository
+      name: '*'
+      namespace: flux-system
+    - kind: Kustomization
+      name: '*'
+      namespace: flux-system
+    - kind: HelmRelease
+      name: '*'
+      namespace: apps
+---
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: flux-system
   namespace: monitoring
-  labels:
-    app.kubernetes.io/part-of: flux
 spec:
   namespaceSelector:
     matchNames:
@@ -23,3 +50,8 @@ spec:
           - image-reflector-controller
   podMetricsEndpoints:
     - port: http-prom
+      relabelings:
+        # https://github.com/prometheus-operator/prometheus-operator/issues/4816
+        - sourceLabels: [__meta_kubernetes_pod_phase]
+          action: keep
+          regex: Running
