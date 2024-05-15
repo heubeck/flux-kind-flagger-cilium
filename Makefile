@@ -50,11 +50,7 @@ cilium_cli_location = $(binary_location)/cilium
 
 kindest_node_image = kindest/node:$(kindest_node_version)
 
-### leave empty for enforcing docker even if podman was available, or set env NO_PODMAN=1
-# kind_podman =
-kind_podman = $(shell [[ "$$NO_PODMAN" -ne 1 ]] && which podman > /dev/null && echo "KIND_EXPERIMENTAL_PROVIDER=podman" || echo "")
-
-kind_cmd = $(kind_podman) $(kind_location)
+kind_cmd = KIND_EXPERIMENTAL_PROVIDER=podman $(kind_location)
 
 wait_timeout= "120s"
 
@@ -69,12 +65,8 @@ cilium_version_number = $(shell $(cilium_cli_location) version --client | grep "
 .PHONY: pre-check
 pre-check: # validate required tools
 	### Checking installed tooling
-	# Podman or Docker
-	@if [ -z "$(kind_podman)" ]; then \
-		docker version -f 'docker client version {{.Client.Version}}, server version {{.Server.Version}}'; \
-	else \
-		podman -v; \
-	fi
+	# Podman
+	podman -v
 	#
 	# Kubectl ($(kubectl_location))
 	@$(kubectl_location) version --client=true --output=json | jq -r '"kubectl version "+ .clientVersion.gitVersion'
@@ -151,7 +143,7 @@ new: # create fresh kind cluster
 	@$(kubectl_location) rollout status --timeout=$(wait_timeout) deployment -n metallb-system controller
 	@$(kubectl_location) rollout status --timeout=$(wait_timeout) daemonset -n metallb-system speaker
 
-	$(eval lb_ip_range := $(shell docker network inspect kind -f '{{(index .IPAM.Config 0).Subnet}}' | sed 's#0.0/16#250.0/24#'))
+	$(eval lb_ip_range := $(shell podman network inspect kind | jq -r '.[] | select(.name == "kind") | .subnets[] | select(.gateway | test("^[0-9]+.[0-9]+.[0-9]+.[0-9]+$$")) | .gateway' | sed 's#0.1#250.0/24#'))
 	# Setting MetalLB address-pool range to $(lb_ip_range)
 	@sed -i "s#addresses:.*#addresses: [\"$(lb_ip_range)\"]#" .kind/metallb/ip-address-pool.yaml
 	@$(kubectl_location) apply -f .kind/metallb/ip-address-pool.yaml

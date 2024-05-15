@@ -18,11 +18,10 @@ The included `Makefile` supports the following tasks:
   Downloads the `kubectl`, `kind`, `flux` and `cilium` clis to `~/.fks` for later use. It's doesn't manipulate any of your regular local setup.
 
 * `make pre-check`:
-  Validates the required setup: podman or docker, kubectl, kind and flux.
+  Validates the required setup: podman, kubectl, kind and flux.
 
 * `make new`:
   Creates a new k8s kind cluster with cilium instead of kube-proxy and points the local kube context to it.
-  If available, _podman_ will be used unless env `NO_PODMAN=1` doesn't prevent it. Otherwise _docker_ is used.
 
 * `make bootstrap`:
   Bootstraps flux to the local cluster, targeting the (_this_) GitHub repository you're using and _the current_ checked out branch.
@@ -53,7 +52,7 @@ The included `Makefile` supports the following tasks:
 
 While `kubectl`, `kind`, `cilium` and `flux` are managed with this repository (for version compatibility of everything in here), your local setup has to fulfill the following:
 
-* `podman` (has precedence) or `docker` client available (and in case of docker configured properly to its daemon)
+* `podman`
 * `curl` for downloading the managed clis
 * some common tools used by the Makefile:
   * `jq`

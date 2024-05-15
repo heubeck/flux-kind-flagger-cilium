@@ -4,4 +4,4 @@ kind: Kustomization
 namespace: metallb-system
 resources:
   # see https://github.com/metallb/metallb/releases
-  - github.com/metallb/metallb/config/native?ref=v0.14.3
+  - github.com/metallb/metallb/config/native?ref=v0.14.5
