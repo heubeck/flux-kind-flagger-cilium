@@ -8,6 +8,7 @@ spec:
   interval: 15m
   dependsOn:
     - name: infrastructure
+    - name: flagger
   sourceRef:
     kind: GitRepository
     name: flux-system
