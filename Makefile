@@ -143,7 +143,7 @@ new: # create fresh kind cluster
 	@$(kubectl_location) rollout status --timeout=$(wait_timeout) deployment -n metallb-system controller
 	@$(kubectl_location) rollout status --timeout=$(wait_timeout) daemonset -n metallb-system speaker
 
-	$(eval lb_ip_range := $(shell podman network inspect kind | jq -r '.[] | select(.name == "kind") | .subnets[] | select(.gateway | test("^[0-9]+.[0-9]+.[0-9]+.[0-9]+$$")) | .gateway' | sed 's#0.1#250.0/24#'))
+	$(eval lb_ip_range := $(shell podman network inspect kind | jq -r '.[] | select(.name == "kind") | .subnets[] | select(.gateway | test("^[0-9]+.[0-9]+.[0-9]+.[0-9]+$$")) | .gateway' | sed 's#0.1#0.240/28#'))
 	# Setting MetalLB address-pool range to $(lb_ip_range)
 	@sed -i "s#addresses:.*#addresses: [\"$(lb_ip_range)\"]#" .kind/metallb/ip-address-pool.yaml
 	@$(kubectl_location) apply -f .kind/metallb/ip-address-pool.yaml
