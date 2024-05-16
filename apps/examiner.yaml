@@ -21,7 +21,7 @@ spec:
     monitoring:
       serviceMonitor: true
     configuration:
-      ECHO_VALUE: ⛈  Canaries r0ck, hell yeah!  🤘
+      ECHO_VALUE: ⛈ Canaries r0ck, hell yeah! 🤘
       SERVER_ERROR_RATE: 3
       REQUEST_DELAY: 50..250
     gatewayApi:
