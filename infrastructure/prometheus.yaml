@@ -76,12 +76,8 @@ spec:
 #      additionalDataSources:
 #        - inputName: "DS_PROMETHEUS"
 #          datasourceName: "Prometheus"
-#          orgId: 1
-#          uid: ds_prom
 #        - inputName: "prometheus_datasource"
 #          datasourceName: "Prometheus"
-#          orgId: 1
-#          uid: prom_ds
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
