@@ -27,7 +27,7 @@ flux_version = v2.3.0
 kindest_node_version = v1.30.0
 
 # https://github.com/cilium/cilium-cli/releases
-cilium_cli_version = v0.16.7
+cilium_cli_version = v0.16.9
 # https://github.com/cilium/cilium/releases
 cilium_version = v1.15.5
 
