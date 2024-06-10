@@ -193,4 +193,6 @@ reconcile: # reconsule flux-system kustomization
 wait: # wait for reconciliation complete
 	@$(kubectl_location) wait --for=condition=ready --timeout=$(wait_timeout) kustomization -n flux-system flux-system
 	@$(kubectl_location) wait --for=condition=ready --timeout=$(wait_timeout) kustomization -n flux-system infrastructure
+	@$(kubectl_location) wait --for=condition=ready --timeout=$(wait_timeout) kustomization -n flux-system flagger
+	@$(kubectl_location) wait --for=condition=ready --timeout=$(wait_timeout) kustomization -n flux-system monitoring-config
 	@$(kubectl_location) wait --for=condition=ready --timeout=$(wait_timeout) kustomization -n flux-system apps

@@ -1,6 +1,6 @@
 # Flux-Kind-Starter for Canary Deployment experiments using the Gateway API and Cilium
 
-A local Kubernetes setup using [Kind](https://kind.sigs.k8s.io/) with [Cilium](https://cilium.io/), [Flagger](https://flagger.app/) and [Flux](https://fluxcd.io/) as template for your (and mine) canary deployment experiments.
+A local Kubernetes setup using [Kind](https://kind.sigs.k8s.io/) with [Podman](https://podman.io/) and [Cilium](https://cilium.io/), [Flagger](https://flagger.app/) and [Flux](https://fluxcd.io/) as template for your (and mine) canary deployment experiments.
 
 ## Usage
 
@@ -52,7 +52,8 @@ The included `Makefile` supports the following tasks:
 
 While `kubectl`, `kind`, `cilium` and `flux` are managed with this repository (for version compatibility of everything in here), your local setup has to fulfill the following:
 
-* `podman`
+* `podman` as container runtime
+* `make` for orchestrating the setup
 * `curl` for downloading the managed clis
 * some common tools used by the Makefile:
   * `jq`
@@ -60,7 +61,10 @@ While `kubectl`, `kind`, `cilium` and `flux` are managed with this repository (f
   * `awk`
   * `sed`
   * `which`
-  * `tar` (with gzip support)
+  * `tar` (with `gzip` support)
+
+For exposing loadbalancer services on virtual IPs, MetalLB is used. The `make new` command inspects the podman/kind network and configures the appropiate subnet in [its IPAddressPool](.kind/metallb/ip-address-pool.yaml).
+On any issues, please check that the auto detected subnet matches your configuration and adjust it, if not.
 
 ## Contribution
 
