@@ -32,7 +32,7 @@ spec:
         name: http-gateway
         namespace: default
     canary:
-      enabled: false
+      enabled: true
       analysis:
         interval: 60s
         threshold: 2

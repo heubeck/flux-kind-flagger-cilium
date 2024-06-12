@@ -47,6 +47,10 @@ spec:
         max: 500
 
   progressDeadlineSeconds: 600
+  autoscalerRef:
+    apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    name: examiner
   provider: gatewayapi:v1
   service:
     gatewayRefs:
