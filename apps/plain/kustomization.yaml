@@ -6,6 +6,6 @@ resources:
 - serviceaccount.yaml
 - deployment.yaml
 - service.yaml
-#- canary.yaml
+- canary.yaml
 # HttpRoute is created by Flagger if Canary is configured
 #- route.yaml
