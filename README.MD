@@ -69,6 +69,41 @@ While `kubectl`, `kind`, `cilium` and `flux` are managed with this repository (f
 For exposing loadbalancer services on virtual IPs, MetalLB is used. The `make new` command inspects the podman/kind network and configures the appropiate subnet in [its IPAddressPool](.kind/metallb/ip-address-pool.yaml).
 On any issues, please check that the auto detected subnet matches your configuration and adjust it, if not.
 
+## Walkthrough
+
+Play with Flagger and watch it play.
+
+### Setup
+
+Bring it to life (after forking and cloning this repo) using:
+
+```sh
+make prepare
+make new
+make bootstrap
+```
+
+### Explore
+
+* Get host mapped load balancer IPs: `kubectl get service` (EXTERNAL_IP, e.g. 10.89.0.240 for port 80; 10.89.0.241 for port 443)
+* [Plain resources deployed Examiner](apps/plain): http://10.89.0.240/examine-plain
+* [Helm deployed Examiner](apps/helm): http://10.89.0.240/examine-helm
+* Cilium Hubble UI (exposed directly to host): http://localhost:8088
+* Kubernetes Dashboard: https://10.89.0.241/ ("skip login")
+* Prometheus: http://10.89.0.240/prometheus
+* Grafana: http://10.89.0.240/grafana
+
+### Experiment without Canary
+
+* To switch between own HttpRoute config and Flagger managed routing, comment in/out route.yaml and canary.yaml
+  [here](apps/plain/kustomization.yaml).
+* produce some traffic:
+  `hey -z 10m http://10.89.0.240/examine-plain`
+* watch it in [Grafana](http://10.89.0.240/grafana/d/3g264CZVz/hubble-l7-http-metrics-by-workload?orgId=1&refresh=30s&from=now-5m&to=now&var-DS_PROMETHEUS=prometheus&var-cluster=&var-destination_namespace=plain&var-destination_workload=examiner&var-reporter=client&var-source_namespace=All&var-source_workload=All)
+* and [Hubble UI](http://localhost:8088/?namespace=plain)
+* Do some changes (increase error rate) by updating [its config](apps/plain/configmap.yaml) and `kubectl rollout restart deployment -n plain examiner`
+* Watch it fail immediately
+
 ## Contribution
 
 Please don't hesitate to file any issues or propose enhancements to this repo.
