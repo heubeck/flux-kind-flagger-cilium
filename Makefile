@@ -182,7 +182,7 @@ endif
 .PHONY: reconcile
 reconcile: # reconsule flux-system kustomization
 	@$(flux_location) reconcile kustomization flux-system --with-source
-	@$(kubectl_location) get kustomization -n flux-system
+	@$(kubectl_location) get kustomization -n flux-system flux-system
 	@$(flux_location) reconcile kustomization infrastructure
 	@$(flux_location) reconcile kustomization monitoring-config
 	@$(flux_location) reconcile kustomization flagger

@@ -39,6 +39,9 @@ spec:
     match:
     - uri:
         prefix: /examine-plain
+    rewrite:
+      uri: /examine
+      type: ReplacePrefixMatch
     port: 80
     targetPort: 8080
     timeout: 120s

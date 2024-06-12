@@ -27,11 +27,12 @@ spec:
     gatewayApi:
       enabled: true
       pathPrefix: /examine-helm
+      pathPrefixRewrite: /examine
       gatewayRef:
         name: http-gateway
         namespace: default
     canary:
-      enabled: true
+      enabled: false
       analysis:
         interval: 60s
         threshold: 2

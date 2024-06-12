@@ -4,5 +4,3 @@ kind: Kustomization
 resources:
 - helm-charts.yaml
 - examiner.yaml
-# HttpRoute is created by Flagger if Canary is configured
-# - route.yaml
