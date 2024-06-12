@@ -3,20 +3,20 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: routes
+  name: examiner
   namespace: plain
 spec:
   parentRefs:
-    - name: http-gateway
-      namespace: default
+  - name: http-gateway
+    namespace: default
   rules:
-  - matches:
+  - backendRefs:
+    - name: examiner
+      port: 80
+    matches:
     - path:
         type: PathPrefix
         value: /examine-plain
-    backendRefs:
-    - name: examiner
-      port: 80
     filters:
     - type: URLRewrite
       urlRewrite:

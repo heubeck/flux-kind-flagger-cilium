@@ -1,4 +1,5 @@
 ---
+# https://github.com/fluxcd/flagger/blob/main/pkg/apis/flagger/v1beta1/canary.go
 apiVersion: flagger.app/v1beta1
 kind: Canary
 metadata:
@@ -6,9 +7,29 @@ metadata:
   namespace: plain
 spec:
   analysis:
-    alerts: []
+
+    # schedule interval (default 60s)
     interval: 60s
+
+    # max traffic percentage routed to canary
+    # percentage (0-100)
     maxWeight: 100
+
+    # Incremental traffic weight step for analysis phase
+    # percentage (0-100)
+    stepWeight: 20
+    # or: Predefined traffic weight steps for analysis phase
+    # stepWeights: [1, 2, 10, 80]
+
+    # Incremental traffic weight step for promotion phase
+    # percentage (0-100)
+    stepWeightPromotion: 35
+
+    # Max number of failed checks before the canary is terminated and rolled back
+    threshold: 2
+
+    alerts: []
+    webhooks: []
     metrics:
     - interval: 1m
       name: server-success-rate
@@ -24,10 +45,7 @@ spec:
         namespace: flux-system
       thresholdRange:
         max: 500
-    stepWeight: 20
-    stepWeightPromotion: 35
-    threshold: 2
-    webhooks: []
+
   progressDeadlineSeconds: 600
   provider: gatewayapi:v1
   service:
