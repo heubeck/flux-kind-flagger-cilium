@@ -116,6 +116,7 @@ Ok, first let's repair it by reverting the [config change](apps/plain/configmap.
   `hey -z 10m http://10.89.0.240/examine-plain`
 * Check Hubble UI and Grafana
 * Make it fail again with [server errors](apps/plain/configmap.yaml)
+* No need for manual restart - check Flagger logs
 
 
 ## Contribution
