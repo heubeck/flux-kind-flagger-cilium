@@ -109,7 +109,13 @@ make bootstrap
 Ok, first let's repair it by reverting the [config change](apps/plain/configmap.yaml).
 
 * Activate canary by [commenting routes.yaml out and canary.yaml in](apps/plain/kustomization.yaml)
+* Check what happend in Kubernetes Dashboard or by `kubectl get all -n plain`
+* Check HttpRoute `kubectl get httproute -n plain -o yaml` and Flagger logs
 
+* Make traffic again
+  `hey -z 10m http://10.89.0.240/examine-plain`
+* Check Hubble UI and Grafana
+* Make it fail again with [server errors](apps/plain/configmap.yaml)
 
 
 ## Contribution
