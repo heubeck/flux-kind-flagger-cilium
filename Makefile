@@ -18,7 +18,7 @@ arch = $(shell [[ "$$(uname -m)" = x86_64 ]] && echo "amd64" || echo "$$(uname -
 ### versions
 
 # https://kubernetes.io/releases/
-kubectl_version = v1.30.1
+kubectl_version = v1.30.2
 # https://github.com/kubernetes-sigs/kind/releases
 kind_version = v0.23.0
 # https://github.com/fluxcd/flux2/releases
@@ -52,7 +52,7 @@ kindest_node_image = kindest/node:$(kindest_node_version)
 
 kind_cmd = KIND_EXPERIMENTAL_PROVIDER=podman $(kind_location)
 
-wait_timeout= "120s"
+wait_timeout= "180s"
 
 gitops_repo_owner = $(shell [[ "$(gitops_repo)" = http* ]] && echo $(gitops_repo) | cut -d/ -f4 || echo $(gitops_repo) | cut -d: -f2 | cut -d/ -f1)
 gitops_repo_name = $(shell [[ "$(gitops_repo)" = http* ]] && echo $(gitops_repo) | cut -d/ -f5 | cut -d. -f1 || echo $(gitops_repo) | cut -d/ -f2 | cut -d. -f1)
