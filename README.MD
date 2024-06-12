@@ -101,8 +101,16 @@ make bootstrap
   `hey -z 10m http://10.89.0.240/examine-plain`
 * watch it in [Grafana](http://10.89.0.240/grafana/d/3g264CZVz/hubble-l7-http-metrics-by-workload?orgId=1&refresh=30s&from=now-5m&to=now&var-DS_PROMETHEUS=prometheus&var-cluster=&var-destination_namespace=plain&var-destination_workload=examiner&var-reporter=client&var-source_namespace=All&var-source_workload=All)
 * and [Hubble UI](http://localhost:8088/?namespace=plain)
-* Do some changes (increase error rate) by updating [its config](apps/plain/configmap.yaml) and `kubectl rollout restart deployment -n plain examiner`
+* Do some changes (increase error rate) by updating [its config](apps/plain/configmap.yaml), `make reconcile` to sync it and `kubectl rollout restart deployment -n plain examiner` to roll it out
 * Watch it fail immediately
+
+### Experiment with Canary
+
+Ok, first let's repair it by reverting the [config change](apps/plain/configmap.yaml).
+
+* Activate canary by [commenting routes.yaml out and canary.yaml in](apps/plain/kustomization.yaml)
+
+
 
 ## Contribution
 

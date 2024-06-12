@@ -6,5 +6,5 @@ metadata:
   namespace: plain
 data:
   ECHO_VALUE: "⛈ Plain Canaries r0ck, hell yeah! \U0001F918"
-  REQUEST_DELAY: "250..750"
-  SERVER_ERROR_RATE: "90"
+  REQUEST_DELAY: "50..150"
+  SERVER_ERROR_RATE: "1"
