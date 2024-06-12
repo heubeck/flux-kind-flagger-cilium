@@ -1,0 +1,19 @@
+# Only needed if there's no Canary
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: routes
+  namespace: helm
+spec:
+  parentRefs:
+    - name: http-gateway
+      namespace: default
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /examine-helm
+    backendRefs:
+    - name: examiner
+      port: 80

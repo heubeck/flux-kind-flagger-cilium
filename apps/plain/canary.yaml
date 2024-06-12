@@ -1,0 +1,49 @@
+---
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: examiner
+  namespace: plain
+spec:
+  analysis:
+    alerts: []
+    interval: 60s
+    maxWeight: 100
+    metrics:
+    - interval: 1m
+      name: server-success-rate
+      templateRef:
+        name: server-success-rate
+        namespace: flux-system
+      thresholdRange:
+        min: 90
+    - interval: 1m
+      name: request-latency-p99
+      templateRef:
+        name: request-latency-p99
+        namespace: flux-system
+      thresholdRange:
+        max: 500
+    stepWeight: 20
+    stepWeightPromotion: 35
+    threshold: 2
+    webhooks: []
+  progressDeadlineSeconds: 600
+  provider: gatewayapi:v1
+  service:
+    gatewayRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: http-gateway
+      namespace: default
+    match:
+    - uri:
+        prefix: /examine-plain
+    port: 80
+    targetPort: 8080
+    timeout: 120s
+  skipAnalysis: false
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: examiner

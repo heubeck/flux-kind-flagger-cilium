@@ -36,6 +36,9 @@ The included `Makefile` supports the following tasks:
 * `make reconcile`:
   Triggers the `flux reconcile` for the root kustomization `flux-system`.
 
+* `make kube-ctx`:
+  Configures local kubectl context (done by `make new`, just in case it changed)
+
 * `make clean`:
   Removes the local kind cluster.
 

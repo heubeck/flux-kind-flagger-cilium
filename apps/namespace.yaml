@@ -2,4 +2,9 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: apps
+  name: helm
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: plain

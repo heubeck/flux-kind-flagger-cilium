@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: examiner
+  namespace: plain
+data:
+  ECHO_VALUE: "⛈ Plain Canaries r0ck, hell yeah! \U0001F918"
+  REQUEST_DELAY: "50..250"
+  SERVER_ERROR_RATE: "3"
