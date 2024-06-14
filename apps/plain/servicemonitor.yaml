@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: examiner-plain
+  namespace: monitoring
+spec:
+  endpoints:
+  - followRedirects: true
+    interval: 30s
+    path: /metrics
+    port: http
+    scrapeTimeout: 10s
+  jobLabel: examiner-plain
+  namespaceSelector:
+    matchNames:
+    - plain
+  selector:
+    matchExpressions:
+    - key: app.kubernetes.io/name
+      operator: In
+      values:
+      - examiner-primary
+      - examiner-canary
+      - examiner

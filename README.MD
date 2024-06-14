@@ -98,7 +98,7 @@ make bootstrap
 * To switch between own HttpRoute config and Flagger managed routing, comment in/out route.yaml and canary.yaml
   [here](apps/plain/kustomization.yaml).
 * produce some traffic:
-  `hey -z 10m http://10.89.0.240/examine-plain`
+  `hey -z 60m http://10.89.0.240/examine-plain`
 * watch it in [Grafana](http://10.89.0.240/grafana/d/3g264CZVz/hubble-l7-http-metrics-by-workload?orgId=1&refresh=30s&from=now-5m&to=now&var-DS_PROMETHEUS=prometheus&var-cluster=&var-destination_namespace=plain&var-destination_workload=examiner&var-reporter=client&var-source_namespace=All&var-source_workload=All)
 * and [Hubble UI](http://localhost:8088/?namespace=plain)
 * Do some changes (increase error rate) by updating [its config](apps/plain/configmap.yaml), `make reconcile` to sync it and `kubectl rollout restart deployment -n plain examiner` to roll it out
@@ -113,7 +113,7 @@ Ok, first let's repair it by reverting the [config change](apps/plain/configmap.
 * Check HttpRoute `kubectl get httproute -n plain -o yaml` and Flagger logs
 
 * Make traffic again
-  `hey -z 10m http://10.89.0.240/examine-plain`
+  `hey -z 60m http://10.89.0.240/examine-plain`
 * Check Hubble UI and Grafana
 * Make it fail again with [server errors](apps/plain/configmap.yaml)
 * No need for manual restart - check Flagger logs
