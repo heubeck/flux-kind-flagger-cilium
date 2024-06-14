@@ -27,6 +27,9 @@ spec:
     crds: Create
   upgrade:
     crds: CreateReplace
+  # https://github.com/fluxcd/flagger/blob/main/charts/flagger/values.yaml
   values:
     meshProvider: gatewayapi:v1
     metricsServer: http://prometheus-operated.monitoring:9090/prometheus/
+    podMonitor:
+      enabled: true

@@ -29,7 +29,13 @@ spec:
     threshold: 2
 
     alerts: []
-    webhooks: []
+
+    # https://docs.flagger.app/usage/webhooks
+    webhooks:
+    - name: "logging"
+      type: event
+      url: "http://logger.default/examine"
+
     metrics:
     - interval: 1m
       name: server-success-rate
