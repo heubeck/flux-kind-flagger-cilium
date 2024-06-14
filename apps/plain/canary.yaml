@@ -28,13 +28,14 @@ spec:
     # Max number of failed checks before the canary is terminated and rolled back
     threshold: 2
 
-    alerts: []
-
     # https://docs.flagger.app/usage/webhooks
     webhooks:
     - name: "logging"
       type: event
       url: "http://logger.default/examine"
+
+    # https://docs.flagger.app/usage/alerting
+    alerts: []
 
     metrics:
     - interval: 1m
