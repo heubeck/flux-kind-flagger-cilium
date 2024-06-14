@@ -3,7 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: chart-repo
-  namespace: helm
+  namespace: default
 spec:
   interval: 120m
   url: https://helm-charts.mms.tech
