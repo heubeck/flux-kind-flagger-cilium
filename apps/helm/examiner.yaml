@@ -23,7 +23,7 @@ spec:
       serviceMonitor: true
     configuration:
       ECHO_VALUE: ⛈ Helm Canary r0ckx, hell yeah! 🤘
-      SERVER_ERROR_RATE: 3
+      SERVER_ERROR_RATE: 2
       REQUEST_DELAY: 50..250
     gatewayApi:
       enabled: true
