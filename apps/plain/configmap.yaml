@@ -5,6 +5,6 @@ metadata:
   name: examiner
   namespace: plain
 data:
-  ECHO_VALUE: "⛈ Plain Canaries r0ck, hell yeah! \U0001F918"
-  REQUEST_DELAY: "50..150"
-  SERVER_ERROR_RATE: "2"
+  ECHO_VALUE: "⛈ CloudLand r0ckx as well, hell yeah! \U0001F918"
+  REQUEST_DELAY: "10..50"
+  SERVER_ERROR_RATE: "5"
